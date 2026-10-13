@@ -1,0 +1,87 @@
+erDiagram
+    msdyn_project ||--o{ msdyn_projectgoal : "has goals"
+    msdyn_project ||--o{ msdyn_projectbucket : "has"
+    msdyn_project }o--|| msdyn_organizationalunit : "contract org unit"
+    msdyn_project }o--|| calendar : "uses calendar"
+    msdyn_project }o--|| systemuser : "project manager"
+    msdyn_projectgoal }o--|| systemuser : "owner"
+    systemuser }o--|| calendar : "personal calendar"
+    msdyn_project ||--o{ msdyn_projecttask : "has"
+    msdyn_project ||--o{ msdyn_projectteam : "has team members"
+    msdyn_project ||--o{ msdyn_projecttaskdependency : "has dependencies"
+    msdyn_project ||--o{ msdyn_resourceassignment : "has assignments"
+    msdyn_projectbucket ||--o{ msdyn_projecttask : "contains"
+
+    msdyn_projecttask ||--o{ msdyn_resourceassignment : "assigned via"
+    msdyn_projecttask ||--o{ msdyn_projecttaskdependency : "predecessor in"
+    msdyn_projecttask ||--o{ msdyn_projecttaskdependency : "successor in"
+
+    msdyn_projectteam ||--o{ msdyn_resourceassignment : "resource for"
+
+    msdyn_project {
+        guid msdyn_projectid PK
+        string msdyn_subject
+        lookup msdyn_calendarid
+        lookup msdyn_contractorganizationalunitid FK
+        lookup msdyn_projectmanager
+    }
+    msdyn_projectgoal {
+        guid msdyn_projectgoalid PK
+        string msdyn_name
+        lookup msdyn_projectid FK
+        date msdyn_start
+        date msdyn_end
+        int msdyn_status
+        int msdyn_priority
+        int msdyn_colorindex
+    }
+    msdyn_projectbucket {
+        guid msdyn_projectbucketid PK
+        string msdyn_name
+        lookup msdyn_project FK
+    }
+    msdyn_projecttask {
+        guid msdyn_projecttaskid PK
+        string msdyn_subject
+        lookup msdyn_project FK
+        lookup msdyn_projectbucket FK
+        date msdyn_start
+        date msdyn_finish
+        int msdyn_displaysequence
+        decimal msdyn_percentcomplete
+    }
+    msdyn_projectteam {
+        guid msdyn_projectteamid PK
+        string msdyn_name
+        lookup msdyn_project FK
+    }
+    msdyn_projecttaskdependency {
+        guid msdyn_projecttaskdependencyid PK
+        lookup msdyn_project FK
+        lookup msdyn_PredecessorTask FK
+        lookup msdyn_SuccessorTask FK
+        int msdyn_linktype
+    }
+    calendar {
+        guid calendarid PK
+        int type
+        bool isshared
+    }
+    msdyn_organizationalunit {
+        guid msdyn_organizationalunitid PK
+        string msdyn_name
+    }
+    systemuser {
+        guid systemuserid PK
+        string fullname
+        string domainname
+        string title
+        lookup _businessunitid_value
+        lookup _calendarid_value FK
+    }
+    msdyn_resourceassignment {
+        guid msdyn_resourceassignmentid PK
+        lookup msdyn_projecttask FK
+        lookup msdyn_projectteam FK
+        decimal msdyn_plannedwork
+    }
